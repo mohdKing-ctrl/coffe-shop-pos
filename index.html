@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Candiz POS — Point of Sale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">☕</div>
+      <div class="brand-text">
+        <strong id="brandName">Candiz</strong>
+        <span id="brandBranch">Main Branch</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item active" data-view="pos">     <span class="ico">🧾</span> <span data-i18n="nav_pos">Register</span></button>
+      <button class="nav-item"        data-view="orders">  <span class="ico">📋</span> <span data-i18n="nav_orders">Orders</span></button>
+      <button class="nav-item"        data-view="reports"> <span class="ico">📊</span> <span data-i18n="nav_reports">Reports</span></button>
+      <button class="nav-item"        data-view="products"><span class="ico">🍰</span> <span data-i18n="nav_products">Products</span></button>
+      <button class="nav-item"        data-view="settings"><span class="ico">⚙️</span> <span data-i18n="nav_settings">Settings</span></button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="lang-switch" id="langSwitch">
+        <button class="active" data-lang="en">English</button>
+        <button data-lang="ar">العربية</button>
+      </div>
+      <div class="clock" id="clock">--:--</div>
+      <div class="date" id="today">—</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- ---------- REGISTER ---------- -->
+    <section class="view active" id="view-pos">
+      <div class="pos">
+
+        <div class="pos-menu">
+          <header class="toolbar">
+            <div class="search-wrap">
+              <span class="search-ico">🔍</span>
+              <input type="search" id="search" data-i18n-ph="search_ph" placeholder="Search the menu…" autocomplete="off">
+            </div>
+            <button class="btn ghost" id="heldBtn"><span data-i18n="held_tickets">Held tickets</span> <span class="pill" id="heldCount">0</span></button>
+          </header>
+
+          <div class="cat-tabs" id="catTabs"></div>
+          <div class="sub-tabs" id="subTabs"></div>
+
+          <div class="grid" id="grid"></div>
+        </div>
+
+        <!-- ---------- CART ---------- -->
+        <aside class="cart">
+          <div class="cart-head">
+            <div>
+              <div class="cart-title" data-i18n="current_order">Current order</div>
+              <div class="cart-sub" id="orderNoLabel">#0001</div>
+            </div>
+            <button class="btn ghost small" id="clearCart" data-i18n="clear">Clear</button>
+          </div>
+
+          <div class="seg" id="orderType">
+            <button class="active" data-type="Dine-in" data-i18n="dine_in">Dine-in</button>
+            <button data-type="Takeaway" data-i18n="takeaway">Takeaway</button>
+            <button data-type="Delivery" data-i18n="delivery">Delivery</button>
+          </div>
+
+          <div class="cart-items" id="cartItems"></div>
+
+          <div class="cart-foot">
+            <div class="disc-row">
+              <label data-i18n="discount">Discount</label>
+              <div class="disc-controls">
+                <select id="discType">
+                  <option value="none" data-i18n="none">None</option>
+                  <option value="percent">%</option>
+                  <option value="amount" data-i18n="amount">Amount</option>
+                </select>
+                <input type="number" id="discValue" min="0" step="0.001" value="0" disabled>
+              </div>
+            </div>
+
+            <div class="totals" id="totals"></div>
+
+            <div class="cart-actions">
+              <button class="btn ghost" id="holdBtn" data-i18n="hold">Hold</button>
+              <button class="btn primary big" id="payBtn" disabled><span data-i18n="charge">Charge</span> <span id="payAmount">0.000</span></button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ---------- ORDERS ---------- -->
+    <section class="view" id="view-orders">
+      <header class="page-head">
+        <h1 data-i18n="orders_title">Orders</h1>
+        <div class="page-tools">
+          <input type="date" id="ordDate">
+          <input type="search" id="ordSearch" data-i18n-ph="ord_search_ph" placeholder="Order # or item…">
+          <button class="btn ghost" id="ordAll" data-i18n="all_dates">All dates</button>
+          <button class="btn primary" id="ordExcel"><span class="xl-ico">🟩</span> <span data-i18n="export_excel">Export to Excel</span></button>
+        </div>
+      </header>
+      <div class="page-body">
+        <div class="ord-summary" id="ordSummary"></div>
+        <div class="table-wrap">
+          <table class="table" id="ordTable">
+            <thead>
+              <tr>
+                <th data-i18n="th_no">#</th><th data-i18n="th_time">Time</th>
+                <th data-i18n="th_type">Type</th><th class="num" data-i18n="th_items">Items</th>
+                <th class="num" data-i18n="th_total">Total</th><th data-i18n="th_payment">Payment</th>
+                <th data-i18n="th_status">Status</th><th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- REPORTS ---------- -->
+    <section class="view" id="view-reports">
+      <header class="page-head">
+        <h1 data-i18n="reports_title">Reports</h1>
+        <div class="page-tools">
+          <div class="seg small" id="rangePresets">
+            <button class="active" data-range="today" data-i18n="today">Today</button>
+            <button data-range="yesterday" data-i18n="yesterday">Yesterday</button>
+            <button data-range="week" data-i18n="this_week">This week</button>
+            <button data-range="month" data-i18n="this_month">This month</button>
+            <button data-range="all" data-i18n="all_time">All time</button>
+          </div>
+          <input type="date" id="repFrom">
+          <span class="dash">→</span>
+          <input type="date" id="repTo">
+          <button class="btn primary" id="repExcel"><span class="xl-ico">🟩</span> <span data-i18n="export_excel">Export to Excel</span></button>
+          <button class="btn ghost" id="repExport" data-i18n="export_csv">Export CSV</button>
+        </div>
+      </header>
+
+      <div class="page-body">
+        <div class="kpis" id="kpis"></div>
+
+        <div class="rep-grid">
+          <div class="card">
+            <h3 data-i18n="sales_by_hour">Sales by hour</h3>
+            <div class="chart" id="hourChart"></div>
+          </div>
+          <div class="card">
+            <h3 data-i18n="payment_methods">Payment methods</h3>
+            <div id="payChart"></div>
+          </div>
+        </div>
+
+        <div class="rep-grid">
+          <div class="card">
+            <h3 data-i18n="units_by_product">Units sold by product</h3>
+            <div class="table-wrap tall">
+              <table class="table" id="prodTable">
+                <thead><tr>
+                  <th data-i18n="th_product">Product</th><th data-i18n="th_category">Category</th>
+                  <th class="num" data-i18n="th_units">Units</th><th class="num" data-i18n="th_revenue">Revenue</th>
+                  <th class="num" data-i18n="th_profit">Profit</th>
+                </tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <h3 data-i18n="by_category">By category</h3>
+            <div id="catBreak"></div>
+            <h3 class="mt" data-i18n="daily_revenue">Daily revenue</h3>
+            <div class="table-wrap">
+              <table class="table" id="dayTable">
+                <thead><tr>
+                  <th data-i18n="th_date">Date</th><th class="num" data-i18n="th_no">Orders</th>
+                  <th class="num" data-i18n="th_units">Units</th><th class="num" data-i18n="th_revenue">Revenue</th>
+                </tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- PRODUCTS ---------- -->
+    <section class="view" id="view-products">
+      <header class="page-head">
+        <h1 data-i18n="products_title">Products</h1>
+        <div class="page-tools">
+          <input type="search" id="prodSearch" data-i18n-ph="prod_search_ph" placeholder="Search products…">
+          <button class="btn ghost" id="prodReset" data-i18n="reset_menu">Reset to Candiz menu</button>
+          <button class="btn primary" id="prodNew" data-i18n="new_product">+ New product</button>
+        </div>
+      </header>
+      <div class="page-body">
+        <div class="table-wrap">
+          <table class="table" id="mgmtTable">
+            <thead>
+              <tr>
+                <th style="width:64px"></th>
+                <th data-i18n="th_name">Name</th><th data-i18n="th_category">Category</th>
+                <th data-i18n="th_sub">Sub-category</th><th class="num" data-i18n="th_price">Price</th>
+                <th class="num" data-i18n="th_cost">Cost</th><th class="num" data-i18n="th_margin">Margin</th>
+                <th data-i18n="th_status">Status</th><th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- SETTINGS ---------- -->
+    <section class="view" id="view-settings">
+      <header class="page-head"><h1 data-i18n="settings_title">Settings</h1></header>
+      <div class="page-body">
+        <div class="set-grid">
+
+          <div class="card">
+            <h3 data-i18n="shop_details">Shop details</h3>
+            <label class="field"><span data-i18n="shop_name">Shop name</span><input id="setName"></label>
+            <label class="field"><span data-i18n="tagline">Tagline</span><input id="setTagline"></label>
+            <label class="field"><span data-i18n="branch">Branch</span><input id="setBranch"></label>
+            <label class="field"><span data-i18n="phone">Phone</span><input id="setPhone"></label>
+            <label class="field"><span data-i18n="address">Address</span><input id="setAddress"></label>
+            <label class="field"><span data-i18n="vat_number">VAT number</span><input id="setVatNo"></label>
+          </div>
+
+          <div class="card">
+            <h3 data-i18n="money_tax">Money &amp; tax</h3>
+            <label class="field"><span data-i18n="currency_code">Currency code</span><input id="setCurrency"></label>
+            <label class="field"><span data-i18n="decimals">Decimal places</span><input type="number" id="setDecimals" min="0" max="3"></label>
+            <label class="field"><span data-i18n="vat_rate">VAT rate (%)</span><input type="number" id="setVat" min="0" step="0.1"></label>
+            <label class="field checkbox"><input type="checkbox" id="setVatIncl"><span data-i18n="prices_incl_vat">Menu prices already include VAT</span></label>
+            <label class="field"><span data-i18n="service_charge">Service charge (%)</span><input type="number" id="setService" min="0" step="0.1"></label>
+          </div>
+
+          <div class="card">
+            <h3 data-i18n="receipt">Receipt</h3>
+            <label class="field"><span data-i18n="paper_width">Paper width</span>
+              <select id="setWidth"><option value="80">80 mm</option><option value="58">58 mm</option></select>
+            </label>
+            <label class="field"><span data-i18n="footer_msg">Footer message</span><input id="setFooter"></label>
+            <label class="field"><span data-i18n="next_order_no">Next order number</span><input type="number" id="setNextNo" min="1"></label>
+            <label class="field checkbox"><input type="checkbox" id="setBilingual"><span data-i18n="bilingual_receipt">Print receipts in both languages</span></label>
+            <button class="btn ghost" id="testPrint" data-i18n="test_receipt">Print a test receipt</button>
+          </div>
+
+          <div class="card">
+            <h3 data-i18n="data">Data</h3>
+            <p class="muted" data-i18n="data_note">Everything is stored in this browser. Back it up regularly.</p>
+            <div class="btn-row">
+              <button class="btn ghost" id="backupBtn" data-i18n="download_backup">Download backup</button>
+              <button class="btn ghost" id="restoreBtn" data-i18n="restore_backup">Restore backup</button>
+              <input type="file" id="restoreFile" accept="application/json" hidden>
+            </div>
+            <div class="btn-row">
+              <button class="btn ghost" id="demoBtn" data-i18n="demo_data">Generate 30 days of sample sales</button>
+            </div>
+            <hr>
+            <p class="muted danger-note" data-i18n="cannot_undo">These cannot be undone.</p>
+            <div class="btn-row">
+              <button class="btn danger ghost" id="clearOrdersBtn" data-i18n="delete_orders">Delete all orders</button>
+              <button class="btn danger ghost" id="resetAllBtn" data-i18n="factory_reset">Factory reset</button>
+            </div>
+          </div>
+
+        </div>
+        <div class="save-bar"><button class="btn primary" id="saveSettings" data-i18n="save_settings">Save settings</button><span id="saveMsg"></span></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-back" id="payModal" hidden>
+  <div class="modal">
+    <header class="modal-head"><h2 data-i18n="payment">Payment</h2><button class="x" data-close>×</button></header>
+    <div class="modal-body">
+      <div class="pay-due">
+        <span data-i18n="amount_due">Amount due</span>
+        <strong id="payDue">0.000</strong>
+      </div>
+      <div class="seg" id="payMethod">
+        <button class="active" data-method="Cash" data-i18n="cash">Cash</button>
+        <button data-method="Card" data-i18n="card">Card</button>
+        <button data-method="Transfer" data-i18n="transfer">Transfer</button>
+      </div>
+
+      <div id="cashPane">
+        <label class="field"><span data-i18n="cash_received">Cash received</span><input type="number" id="cashIn" step="0.001" min="0"></label>
+        <div class="quick-cash" id="quickCash"></div>
+        <div class="change-row"><span data-i18n="change">Change</span><strong id="changeOut">0.000</strong></div>
+      </div>
+
+      <label class="field"><span data-i18n="customer_opt">Customer / car no. (optional)</span><input id="custNote"></label>
+    </div>
+    <footer class="modal-foot">
+      <button class="btn ghost" data-close data-i18n="cancel">Cancel</button>
+      <button class="btn primary big" id="confirmPay" data-i18n="complete_print">Complete &amp; print</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal-back" id="prodModal" hidden>
+  <div class="modal">
+    <header class="modal-head"><h2 id="prodModalTitle" data-i18n="new_product">New product</h2><button class="x" data-close>×</button></header>
+    <div class="modal-body">
+      <div class="photo-field">
+        <div class="photo-preview" id="pfPreview"><span>🍽️</span></div>
+        <div class="photo-actions">
+          <span class="field-label" data-i18n="product_photo">Photo</span>
+          <button class="btn ghost small" id="pfPickPhoto" data-i18n="choose_photo">Choose photo…</button>
+          <button class="btn ghost small" id="pfDropPhoto" data-i18n="remove_photo">Remove</button>
+          <input type="file" id="pfPhotoFile" accept="image/*" hidden>
+        </div>
+      </div>
+      <label class="field"><span data-i18n="name_en">Name (English)</span><input id="pfName"></label>
+      <label class="field"><span data-i18n="name_ar">Name (Arabic)</span><input id="pfNameAr" dir="rtl"></label>
+      <label class="field"><span data-i18n="th_category">Category</span><input id="pfCat" list="catList"><datalist id="catList"></datalist></label>
+      <label class="field"><span data-i18n="th_sub">Sub-category</span><input id="pfSub" list="subList"><datalist id="subList"></datalist></label>
+      <div class="field-row">
+        <label class="field"><span data-i18n="selling_price">Selling price</span><input type="number" id="pfPrice" step="0.001" min="0"></label>
+        <label class="field"><span data-i18n="cost_price">Cost</span><input type="number" id="pfCost" step="0.001" min="0"></label>
+      </div>
+      <label class="field checkbox"><input type="checkbox" id="pfActive" checked><span data-i18n="available_register">Available on the register</span></label>
+    </div>
+    <footer class="modal-foot">
+      <button class="btn ghost" data-close data-i18n="cancel">Cancel</button>
+      <button class="btn primary" id="pfSave" data-i18n="save_product">Save product</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal-back" id="heldModal" hidden>
+  <div class="modal">
+    <header class="modal-head"><h2 data-i18n="held_tickets">Held tickets</h2><button class="x" data-close>×</button></header>
+    <div class="modal-body" id="heldList"></div>
+    <footer class="modal-foot"><button class="btn ghost" data-close data-i18n="cancel">Cancel</button></footer>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<!-- Receipt lives outside .app so print CSS can isolate it -->
+<div id="receipt" class="receipt"></div>
+
+<script src="js/menu-data.js?v=5"></script>
+<script src="js/i18n.js"></script>
+<script src="js/store.js?v=5"></script>
+<script src="js/xlsx.js?v=5"></script>
+<script src="js/receipt.js?v=5"></script>
+<script src="js/pos.js?v=5"></script>
+<script src="js/orders.js?v=5"></script>
+<script src="js/reports.js?v=5"></script>
+<script src="js/products.js?v=5"></script>
+<script src="js/settings.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
+<script src="js/demo.js"></script>
+</body>
+</html>
